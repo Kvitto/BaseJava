@@ -8,7 +8,8 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private final Resume[] storage = new Resume[10000];
+    public static final int STORAGE_LIMIT = 10000;
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size;
 
     public void clear() {
@@ -26,30 +27,35 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
+        String uuid = resume.getUuid();
         if (size >= storage.length) {
             System.out.println("Ошибка: хранилище переполнено!");
-            return;
-        }
-        String uuid = resume.getUuid();
-        if (findIndex(uuid) >= 0) {
+        } else if (findIndex(uuid) >= 0) {
             System.out.println("Резюме c UUID(" + uuid + ") уже есть в базе!");
-            return;
+        } else {
+            storage[size++] = resume;
+            System.out.println("Резюме c UUID(" + uuid + ") успешно добавлено в базу!");
         }
-        storage[size++] = resume;
-        System.out.println("Резюме c UUID(" + uuid + ") успешно добавлено в базу!");
     }
 
     public Resume get(String uuid) {
         int index = findIndex(uuid);
-        if (index >= 0) return storage[index];
-        return null;
+        if (index < 0) {
+            System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
+            return null;
+        } else {
+            return storage[index];
+        }
     }
 
     public void delete(String uuid) {
         int index = findIndex(uuid);
-        if (index < 0) return;
-        storage[index] = storage[--size];
-        storage[size] = null;
+        if (index < 0) {
+            System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
+        } else {
+            storage[index] = storage[--size];
+            storage[size] = null;
+        }
     }
 
     /**
@@ -69,7 +75,6 @@ public class ArrayStorage {
                 return i;
             }
         }
-        System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
         return -1;
     }
 }
