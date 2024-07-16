@@ -19,8 +19,10 @@ public class ArrayStorage {
 
     public void update(Resume resume) {
         String uuid = resume.getUuid();
-        int index = findIndex(uuid);
-        if (index >= 0) {
+        int index = getIndex(uuid);
+        if (index < 0) {
+            System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
+        } else {
             storage[index] = resume;
             System.out.println("Резюме c UUID(" + uuid + ") успешно обновлено!");
         }
@@ -30,7 +32,7 @@ public class ArrayStorage {
         String uuid = resume.getUuid();
         if (size >= storage.length) {
             System.out.println("Ошибка: хранилище переполнено!");
-        } else if (findIndex(uuid) >= 0) {
+        } else if (getIndex(uuid) >= 0) {
             System.out.println("Резюме c UUID(" + uuid + ") уже есть в базе!");
         } else {
             storage[size++] = resume;
@@ -39,17 +41,16 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        int index = findIndex(uuid);
+        int index = getIndex(uuid);
         if (index < 0) {
             System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
             return null;
-        } else {
-            return storage[index];
         }
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        int index = findIndex(uuid);
+        int index = getIndex(uuid);
         if (index < 0) {
             System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
         } else {
@@ -69,7 +70,7 @@ public class ArrayStorage {
         return size;
     }
 
-    private int findIndex(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (uuid.equals(storage[i].getUuid())) {
                 return i;
