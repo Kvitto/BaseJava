@@ -7,8 +7,8 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage {
-    public static final int STORAGE_LIMIT = 10000;
+public class ArrayStorage implements Storage {
+    private static final int STORAGE_LIMIT = 10000;
     private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size;
 
@@ -17,33 +17,30 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void update(Resume resume) {
-        String uuid = resume.getUuid();
-        int index = getIndex(uuid);
-        if (index < 0) {
-            System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index == -1) {
+            System.out.println("Resume " + r.getUuid() + " not exist");
         } else {
-            storage[index] = resume;
-            System.out.println("Резюме c UUID(" + uuid + ") успешно обновлено!");
+            storage[index] = r;
         }
     }
 
-    public void save(Resume resume) {
-        String uuid = resume.getUuid();
-        if (size >= storage.length) {
-            System.out.println("Ошибка: хранилище переполнено!");
-        } else if (getIndex(uuid) >= 0) {
-            System.out.println("Резюме c UUID(" + uuid + ") уже есть в базе!");
+    public void save(Resume r) {
+        if (getIndex(r.getUuid()) != -1) {
+            System.out.println("Resume " + r.getUuid() + " already exist");
+        } else if (size >= STORAGE_LIMIT) {
+            System.out.println("Storage overflow");
         } else {
-            storage[size++] = resume;
-            System.out.println("Резюме c UUID(" + uuid + ") успешно добавлено в базу!");
+            storage[size] = r;
+            size++;
         }
     }
 
     public Resume get(String uuid) {
         int index = getIndex(uuid);
-        if (index < 0) {
-            System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
+        if (index == -1) {
+            System.out.println("Resume " + uuid + " not exist");
             return null;
         }
         return storage[index];
@@ -52,16 +49,13 @@ public class ArrayStorage {
     public void delete(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("Резюме c UUID(" + uuid + ") НЕ найдено!");
+            System.out.println("Resume " + uuid + " not exist");
         } else {
             storage[index] = storage[--size];
             storage[size] = null;
         }
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
