@@ -16,9 +16,7 @@ public class SortedArrayStorage extends AbstractArrayStorage{
         } else if (insert == size) {
             storage[size++] = r;
         } else {
-            shiftArray(insert);
-            storage[insert] = r;
-            size++;
+            insertToArray(r, insert);
         }
     }
 
@@ -40,9 +38,11 @@ public class SortedArrayStorage extends AbstractArrayStorage{
         return Arrays.binarySearch(storage, 0, size, searchKey);
     }
 
-    private void shiftArray(int index) {
+    private void insertToArray(Resume r, int index) {
         for (int i = size; i > index; ) {
             storage[i] = storage[--i];
         }
+        storage[index] = r;
+        size++;
     }
 }
