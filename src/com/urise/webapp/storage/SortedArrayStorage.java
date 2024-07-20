@@ -4,28 +4,28 @@ import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 
-public class SortedArrayStorage extends AbstractArrayStorage{
+public class SortedArrayStorage extends AbstractArrayStorage {
+
+    @Override
+    protected void fillDeletedElement(int index) {
+        int numMoved = size - index - 1;
+        if (numMoved > 0) {
+            System.arraycopy(storage, index + 1, storage, index, numMoved);
+        }
+    }
+
+    @Override
+    protected void insertElement(Resume r, int index) {
+//      http://codereview.stackexchange.com/questions/36221/binary-search-for-inserting-in-array#answer-36239
+        int insertIdx = -index - 1;
+        System.arraycopy(storage, insertIdx, storage, insertIdx + 1, size - insertIdx);
+        storage[insertIdx] = r;
+    }
+
     @Override
     protected int getIndex(String uuid) {
         Resume searchKey = new Resume();
         searchKey.setUuid(uuid);
         return Arrays.binarySearch(storage, 0, size, searchKey);
-    }
-
-    @Override
-    protected void insertToArray(Resume r, int index) {
-        int insert = -index - 1;
-        if (insert != size) {
-            int tempSize = size - insert;
-            Resume[] tempStorage = new Resume[tempSize];
-            System.arraycopy(storage, insert, tempStorage, 0, tempSize);
-            System.arraycopy(tempStorage, 0, storage, insert + 1, tempSize);
-        }
-        storage[insert] = r;
-    }
-
-    @Override
-    protected void excludeFromArray(int index) {
-        System.arraycopy(storage, index + 1, storage, index, size - index - 1);
     }
 }
