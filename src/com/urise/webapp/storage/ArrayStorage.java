@@ -18,12 +18,10 @@ public class ArrayStorage extends AbstractArrayStorage {
     @Override
     protected void insertToArray(Resume r, int index) {
         storage[size] = r;
-        size++;
     }
 
     @Override
     protected void excludeFromArray(int index) {
-        storage[index] = storage[--size];
-        storage[size] = null;
+        storage[index] = storage[size - 1];
     }
 }
