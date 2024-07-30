@@ -3,9 +3,10 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ListStorage extends AbstractStorage{
-    protected ArrayList<Resume> storage = new ArrayList<>();
+public class ListStorage extends AbstractStorage {
+    protected List<Resume> storage = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -23,33 +24,32 @@ public class ListStorage extends AbstractStorage{
     }
 
     @Override
-    protected void doDelete(int index) {
-        storage.remove(index);
+    protected void doDelete(Object searchKey) {
+        storage.remove(((Integer) searchKey).intValue());
     }
 
     @Override
-    protected Resume doGet(int index) {
-        return storage.get(index);
+    protected Resume doGet(Object searchKey) {
+        return storage.get((Integer) searchKey);
     }
 
     @Override
-    protected void doSave(Resume r, int index) {
+    protected void doSave(Object searchKey, Resume r) {
         storage.add(r);
     }
 
     @Override
-    protected void doUpdate(int index, Resume r) {
-        storage.add(index, r);
+    protected void doUpdate(Object searchKey, Resume r) {
+        storage.add((Integer) searchKey, r);
     }
 
     @Override
-    protected void fillDeletedElement(int index) {}
+    protected boolean isExist(Object searchKey) {
+        return (Integer) searchKey > -1;
+    }
 
     @Override
-    protected void insertElement(Resume r, int index) {}
-
-    @Override
-    protected int getIndex(String uuid) {
+    protected Object getSearchKey(String uuid) {
         for (Resume r : storage) {
             if (uuid.equals(r.getUuid())) {
                 return storage.indexOf(r);
