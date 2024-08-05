@@ -8,6 +8,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class AbstractStorage implements Storage {
+    private static final Comparator<Resume> COMPARATOR = Comparator
+            .comparing(Resume::getFullName)
+            .thenComparing(Resume::getUuid);
 
     @Override
     public void update(Resume r) {
@@ -36,8 +39,7 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         List<Resume> resumeList = getResumeList();
-        Comparator<Resume> comparator = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
-        resumeList.sort(comparator);
+        resumeList.sort(COMPARATOR);
         return resumeList;
     }
 
