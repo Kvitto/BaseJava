@@ -1,3 +1,5 @@
+package com.urise.webapp;
+
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.SortedArrayStorage;
 
@@ -8,11 +10,11 @@ public class MainTestArrayStorage {
     static final SortedArrayStorage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume();
-        Resume r2 = new Resume();
-        Resume r3 = new Resume();
-        Resume r4 = new Resume();
-        Resume r5 = new Resume();
+        Resume r1 = new Resume("Name1");
+        Resume r2 = new Resume("Name2");
+        Resume r3 = new Resume("Name3");
+        Resume r4 = new Resume("Name4");
+        Resume r5 = new Resume("Name5");
 
         ARRAY_STORAGE.save(r2);
         ARRAY_STORAGE.save(r5);
@@ -25,7 +27,7 @@ public class MainTestArrayStorage {
 
         System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
 
-        Resume r6 = new Resume();
+        Resume r6 = new Resume("Name6");
         ARRAY_STORAGE.update(r6);
 
         printAll();
