@@ -43,7 +43,7 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    r = new Resume(param, params[2]);
+                    r = new Resume(params[2]);
                     ARRAY_STORAGE.update(r);
                     printAll();
                     break;
