@@ -4,18 +4,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class ListSection extends Section {
-    private final List<String> descriptions;
+    private final List<String> items;
 
-    public ListSection(List<String> descriptions) {
-        this.descriptions = descriptions;
+    public ListSection(List<String> items) {
+        Objects.requireNonNull(items, "items must not be null");
+        this.items = items;
     }
 
-    public void addDescription(String string) {
-        descriptions.add(string);
-    }
-
-    public List<String> getDescriptions() {
-        return descriptions;
+    public List<String> getItems() {
+        return items;
     }
 
     @Override
@@ -23,18 +20,18 @@ public class ListSection extends Section {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListSection that = (ListSection) o;
-        return Objects.equals(descriptions, that.descriptions);
+        return items.equals(that.items);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(descriptions);
+        return items.hashCode();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        descriptions.forEach(c -> sb.append(c).append("\n"));
+        items.forEach(c -> sb.append(c).append("\n"));
         return sb.toString();
     }
 }

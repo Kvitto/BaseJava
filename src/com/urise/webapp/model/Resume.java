@@ -1,9 +1,6 @@
 package com.urise.webapp.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Initial resume class
@@ -17,8 +14,8 @@ public class Resume implements Comparable<Resume> {
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName,
-                new HashMap<>(),
-                new HashMap<>());
+                new EnumMap<>(ContactType.class),
+                new EnumMap<>(SectionType.class));
     }
 
     public Resume(String uuid, String fullName,
@@ -68,12 +65,7 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public String toString() {
-        return "Resume{" +
-                "uuid='" + uuid + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", contacts=" + contacts +
-                ", sections=" + sections +
-                '}';
+        return uuid + "(" + fullName + ")";
     }
 
     @Override

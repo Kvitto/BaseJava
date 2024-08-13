@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class Company {
-    private final String website;
+    private final Link homePage;
     private final List<Period> periods;
 
-    public Company(String website, List<Period> periods) {
-        this.website = website;
+    public Company(String name, String url, List<Period> periods) {
+        this.homePage = new Link(name, url);
         this.periods = periods;
     }
 
@@ -16,8 +16,8 @@ public class Company {
         return periods;
     }
 
-    public String getWebsite() {
-        return website;
+    public Link getWebsite() {
+        return homePage;
     }
 
     @Override
@@ -25,19 +25,11 @@ public class Company {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Company company = (Company) o;
-        return Objects.equals(periods, company.periods) && Objects.equals(website, company.website);
+        return Objects.equals(homePage, company.homePage) && Objects.equals(periods, company.periods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(periods, website);
-    }
-
-    @Override
-    public String toString() {
-        return "Company{" +
-                "website='" + website + '\'' +
-                ", periods=" + periods +
-                '}';
+        return Objects.hash(homePage, periods);
     }
 }

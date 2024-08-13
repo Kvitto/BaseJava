@@ -18,7 +18,7 @@ public class ResumeTestData {
         myContacts.put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
         myContacts.put(ContactType.GITHUB, "https://github.com/gkislin");
         myContacts.put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
-        myContacts.put(ContactType.HOMEPAGE, "http://gkislin.ru/");
+        myContacts.put(ContactType.HOME_PAGE, "http://gkislin.ru/");
 
         Map<SectionType, Section> mySections = myResume.getSections();
 
@@ -85,18 +85,18 @@ public class ResumeTestData {
 
 // EXPERIENCE section
         List<Company> myCompanies = new ArrayList<>();
-        myCompanies.add(new Company("Java Online Projects",
+        myCompanies.add(new Company("Java Online Projects", "http://javaops.ru/",
                 List.of(new Period(LocalDate.of(2013, 10, 1), LocalDate.now(),
                 "Автор проекта.", "Создание, организация и проведение Java онлайн " +
                 "проектов и стажировок."))));
-        myCompanies.add(new Company("Wrike",
+        myCompanies.add(new Company("Wrike", "https://www.wrike.com/",
                 List.of(new Period(LocalDate.of(2014, 10, 1),
                         LocalDate.of(2016, 1, 1),
                         "Старший разработчик (backend)",
                         "Проектирование и разработка онлайн платформы управления проектами Wrike " +
                                 "(Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). " +
                                 "Двухфакторная аутентификация, авторизация по OAuth1, OAuth2, JWT SSO."))));
-        myCompanies.add(new Company("RIT Center",
+        myCompanies.add(new Company("RIT Center", "",
                 List.of(new Period(LocalDate.of(2016, 1, 1),
                         LocalDate.of(2012, 4, 1),
                         "Java архитектор", "Организация процесса разработки системы ERP для разных " +
@@ -111,19 +111,19 @@ public class ResumeTestData {
 
 // EDUCATION section
         List<Company> myEducation = new ArrayList<>();
-        myEducation.add(new Company("Coursera",
+        myEducation.add(new Company("Coursera","https://www.coursera.org/course/progfun",
                 List.of(new Period(LocalDate.of(2013, 3, 1),
                         LocalDate.of(2013, 5,1),
                         "'Functional Programming Principles in Scala' by Martin Odersky", ""))));
-        myEducation.add(new Company("Luxoft",
+        myEducation.add(new Company("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
                 List.of(new Period(LocalDate.of(2011, 3, 1),
                         LocalDate.of(2011, 4,1),
                         "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.'", ""))));
-        myEducation.add(new Company("Siemens AG",
+        myEducation.add(new Company("Siemens AG", "http://www.siemens.ru/",
                 List.of(new Period(LocalDate.of(2005, 1, 1),
                         LocalDate.of(2005, 4,1),
                         "3 месяца обучения мобильным IN сетям (Берлин)", ""))));
-        myEducation.add(new Company("Alcatel",
+        myEducation.add(new Company("Alcatel", "http://www.alcatel.ru/",
                 List.of(new Period(LocalDate.of(1997, 9, 1),
                         LocalDate.of(1998, 3,1),
                         "6 месяцев обучения цифровым телефонным сетям (Москва)", ""))));
@@ -134,9 +134,9 @@ public class ResumeTestData {
                 LocalDate.of(1993, 7,1),
                 "Инженер (программист Fortran, C)", "");
         myEducation.add(new Company("Санкт-Петербургский национальный исследовательский университет " +
-                "информационных технологий, механики и оптики.",
+                "информационных технологий, механики и оптики.", "http://www.ifmo.ru/",
                 List.of(period1, period2)));
-        myEducation.add(new Company("Заочная физико-техническая школа при МФТИ",
+        myEducation.add(new Company("Заочная физико-техническая школа при МФТИ", "https://mipt.ru/",
                 List.of(new Period(LocalDate.of(1984, 9, 1),
                         LocalDate.of(1987, 6,1),
                         "Закончил с отличием", ""))));
