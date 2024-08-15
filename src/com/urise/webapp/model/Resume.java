@@ -13,9 +13,11 @@ public class Resume implements Comparable<Resume> {
     private final Map<SectionType, Section> sections;
 
     public Resume(String fullName) {
-        this(UUID.randomUUID().toString(), fullName,
-                new EnumMap<>(ContactType.class),
-                new EnumMap<>(SectionType.class));
+        this(UUID.randomUUID().toString(), fullName);
+    }
+
+    public Resume(String uuid, String fullName) {
+        this(uuid, fullName, new EnumMap<>(ContactType.class), new EnumMap<>(SectionType.class));
     }
 
     public Resume(String uuid, String fullName,
