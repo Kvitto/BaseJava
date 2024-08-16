@@ -23,9 +23,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         this.directory = directory;
     }
 
-    protected abstract Resume doRead(File file);
+    protected abstract Resume doRead(File file) throws IOException;
 
-    protected abstract void doWrite(Resume r, File file);
+    protected abstract void doWrite(Resume r, File file) throws IOException;
 
     @Override
     public void clear() {
@@ -39,10 +39,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     protected void doClear(File directory) {
         File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                doDelete(file);
-            }
+        if (files == null) {
+            throw new StorageException("Directory must be not null", null);
+        }
+        for (File file : files) {
+            doDelete(file);
         }
     }
 
@@ -53,7 +54,11 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doUpdate(File file, Resume r) {
-        doWrite(r, file);
+        try {
+            doWrite(r, file);
+        } catch (IOException e) {
+            throw new StorageException("IO error", r.getUuid(), e);
+        }
     }
 
     @Override
@@ -73,25 +78,34 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume doGet(File file) {
-        return doRead(file);
+        try {
+            return doRead(file);
+        } catch (IOException e) {
+            throw new StorageException("IO error", file.getName(), e);
+        }
     }
 
     @Override
     protected void doDelete(File file) {
-        file.delete();
+        if (!file.delete()) {
+            throw new StorageException("file not deleted", file.getName());
+        }
     }
 
     @Override
     protected List<Resume> getResumeList() {
         List<Resume> resumeList = new ArrayList<>();
         File[] files = directory.listFiles();
-        if (files != null) {
-            for (File file : files) {
+        if (files == null) {
+            throw new StorageException("Directory must be not null", null);
+        }
+        for (File file : files) {
+            try {
                 resumeList.add(doRead(file));
+            } catch (IOException e) {
+                throw new StorageException("file not deleted", file.getName());
             }
         }
         return resumeList;
     }
-
-
 }
