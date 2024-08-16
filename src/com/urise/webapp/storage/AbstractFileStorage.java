@@ -34,7 +34,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int getSize() {
-        return Objects.requireNonNull(directory.listFiles()).length;
+        try {
+            return directory.listFiles().length;
+        } catch (NullPointerException e) {
+            throw new StorageException("Directory must be not null", null);
+        }
+
     }
 
     protected void doClear(File directory) {
