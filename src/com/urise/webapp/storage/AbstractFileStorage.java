@@ -34,18 +34,17 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int getSize() {
-        try {
-            return directory.listFiles().length;
-        } catch (NullPointerException e) {
-            throw new StorageException("Directory must be not null", null);
+        File[] files = directory.listFiles();
+         if (files == null) {
+            throw new StorageException("Directory must be not null");
         }
-
+        return files.length;
     }
 
     protected void doClear(File directory) {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("Directory must be not null", null);
+            throw new StorageException("Directory must be not null");
         }
         for (File file : files) {
             doDelete(file);
@@ -102,7 +101,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         List<Resume> resumeList = new ArrayList<>();
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("Directory must be not null", null);
+            throw new StorageException("Directory must be not null");
         }
         for (File file : files) {
             try {
