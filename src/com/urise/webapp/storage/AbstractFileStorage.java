@@ -104,11 +104,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new StorageException("Directory must be not null");
         }
         for (File file : files) {
-            try {
-                resumeList.add(doRead(file));
-            } catch (IOException e) {
-                throw new StorageException("file not deleted", file.getName());
-            }
+            resumeList.add(doGet(file));
         }
         return resumeList;
     }
