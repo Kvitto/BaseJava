@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class CompanySection extends Section {
+    private static final long SerialVersionUID = 1L;
+
     private final List<Company> companies;
 
     public CompanySection(List<Company> companies) {
@@ -40,9 +42,9 @@ public class CompanySection extends Section {
         while (companiesIterator.hasNext()) {
             Company company = companiesIterator.next();
             sb.append(company.getWebsite()).append("\n");
-            for (Period period : company.getPeriods()) {
-                sb.append(period.getStartDate()).append(" - ").append(period.getEndDate()).append("\n").append(period.getTitle())
-                        .append("\n").append(period.getDescription().isBlank() ? "" : period.getDescription() + "\n");
+            for (Company.Position position : company.getPositions()) {
+                sb.append(position.getStartDate()).append(" - ").append(position.getEndDate()).append("\n").append(position.getTitle())
+                        .append("\n").append(position.getDescription().isBlank() ? "" : position.getDescription() + "\n");
             }
             if (companiesIterator.hasNext()) sb.append("\n");
         }
