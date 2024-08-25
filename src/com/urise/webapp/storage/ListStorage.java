@@ -14,7 +14,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return storage.size();
     }
 

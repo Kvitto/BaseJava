@@ -40,6 +40,6 @@ public class StrategyStreamStorage {
     }
 
     public int getSize() {
-        return storage.getSize();
+        return storage.size();
     }
 }

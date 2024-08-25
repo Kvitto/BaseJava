@@ -39,7 +39,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         try (Stream<Path> stream = Files.list(directory)) {
             return (int) stream.count();
         } catch (IOException e) {

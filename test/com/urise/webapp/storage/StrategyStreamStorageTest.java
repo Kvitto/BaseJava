@@ -83,7 +83,7 @@ public class StrategyStreamStorageTest {
     }
 
     @Test
-    public void getSize() {
+    public void size() {
         assertSize(3);
     }
 

@@ -51,7 +51,7 @@ public class MapResumeStorage extends AbstractStorage<Resume> {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return storage.size();
     }
 }

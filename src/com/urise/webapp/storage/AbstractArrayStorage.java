@@ -19,7 +19,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return size;
     }
 

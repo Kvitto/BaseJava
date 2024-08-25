@@ -28,26 +28,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        doClear(directory);
+        for (File file : dirContent()) {
+            doDelete(file);
+        }
     }
 
     @Override
-    public int getSize() {
-        File[] files = directory.listFiles();
-         if (files == null) {
-            throw new StorageException("Directory must be not null");
-        }
-        return files.length;
-    }
-
-    protected void doClear(File directory) {
-        File[] files = directory.listFiles();
-        if (files == null) {
-            throw new StorageException("Directory must be not null");
-        }
-        for (File file : files) {
-            doDelete(file);
-        }
+    public int size() {
+        return dirContent().length;
     }
 
     @Override
@@ -73,10 +61,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void doSave(File file, Resume r) {
         try {
             file.createNewFile();
-            doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO error", r.getUuid(), e);
         }
+        doUpdate(file, r);
     }
 
     @Override
@@ -98,13 +86,17 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> getResumeList() {
         List<Resume> resumeList = new ArrayList<>();
+        for (File file : dirContent()) {
+            resumeList.add(doGet(file));
+        }
+        return resumeList;
+    }
+
+    private File[] dirContent() {
         File[] files = directory.listFiles();
         if (files == null) {
             throw new StorageException("Directory must be not null");
         }
-        for (File file : files) {
-            resumeList.add(doGet(file));
-        }
-        return resumeList;
+        return files;
     }
 }
