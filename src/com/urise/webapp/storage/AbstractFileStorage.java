@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
+    protected final SerializerStrategy serializer;
     private final File directory;
 
-    protected AbstractFileStorage(File directory) {
+    protected AbstractFileStorage(SerializerStrategy serializer, File directory) {
+        this.serializer = serializer;
         Objects.requireNonNull(directory, "Directory must be not null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
