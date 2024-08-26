@@ -4,7 +4,7 @@ import com.urise.webapp.storage.serializer.StreamSerializer;
 
 public class FileStorageTest extends AbstractStorageTest {
     public FileStorageTest() {
-        super(new FileStorage(STORAGE_DIR, new StreamSerializer()));
+        super(new FileStorage(new StreamSerializer(), STORAGE_DIR));
     }
 
 }
