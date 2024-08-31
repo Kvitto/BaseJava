@@ -16,15 +16,12 @@ public class DataStreamSerializer implements StreamSerializer {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
             serializeContacts(dos, r);
-            Map<SectionType, Section> sections = r.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
-                SectionType sectionType = SectionType.valueOf(entry.getKey().name());
-                Section section = entry.getValue();
-                switch (sectionType) {
-                    case PERSONAL, OBJECTIVE -> serializeText(dos, sectionType, section);
-                    case ACHIEVEMENT, QUALIFICATION -> serializeList(dos, sectionType, section);
-                    case EXPERIENCE, EDUCATION -> serializeCompany(dos, sectionType, section);
+            dos.writeInt(r.getSections().size());
+            for (Map.Entry<SectionType, Section> entry : r.getSections().entrySet()) {
+                switch (SectionType.valueOf(entry.getKey().name())) {
+                    case PERSONAL, OBJECTIVE -> serializeText(dos, entry);
+                    case ACHIEVEMENT, QUALIFICATION -> serializeList(dos, entry);
+                    case EXPERIENCE, EDUCATION -> serializeCompany(dos, entry);
                 }
             }
         }
@@ -43,9 +40,9 @@ public class DataStreamSerializer implements StreamSerializer {
                 switch (sectionType) {
                     case PERSONAL, OBJECTIVE -> resume.addSections(sectionType, new TextSection(dis.readUTF()));
                     case ACHIEVEMENT, QUALIFICATION ->
-                            resume.addSections(sectionType, new ListSection(deserializeList(dis)));
+                            resume.addSections(sectionType, new ListSection(deserializeSection(dis, String.class)));
                     case EXPERIENCE, EDUCATION ->
-                            resume.addSections(sectionType, new CompanySection(deserializeCompany(dis)));
+                            resume.addSections(sectionType, new CompanySection(deserializeSection(dis, Company.class)));
                 }
             }
             return resume;
@@ -53,39 +50,37 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     private void serializeContacts(DataOutputStream dos, Resume resume) throws IOException {
-        Map<ContactType, String> contacts = resume.getContacts();
-        dos.writeInt(contacts.size());
+        dos.writeInt(resume.getContacts().size());
         for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
             dos.writeUTF(entry.getKey().name());
             dos.writeUTF(entry.getValue());
         }
     }
 
-    private void serializeText(DataOutputStream dos, SectionType type, Section section) throws IOException {
-        dos.writeUTF(type.name());
-        TextSection textSection = (TextSection) section;
+    private void serializeText(DataOutputStream dos, Map.Entry<SectionType, Section> entry) throws IOException {
+        dos.writeUTF(entry.getKey().name());
+        TextSection textSection = (TextSection) entry.getValue();
         dos.writeUTF(textSection.getContent());
     }
 
-    private void serializeList(DataOutputStream dos, SectionType type, Section section) throws IOException {
-        dos.writeUTF(type.name());
-        List<String> list = ((ListSection) section).getItems();
+    private void serializeList(DataOutputStream dos, Map.Entry<SectionType, Section> entry) throws IOException {
+        dos.writeUTF(entry.getKey().name());
+        List<String> list = ((ListSection) entry.getValue()).getItems();
         dos.writeInt(list.size());
         for (String string : list) {
             dos.writeUTF(string);
         }
     }
 
-    private void serializeCompany(DataOutputStream dos, SectionType type, Section section) throws IOException {
-        dos.writeUTF(type.name());
-        List<Company> list = ((CompanySection) section).getCompanies();
+    private void serializeCompany(DataOutputStream dos, Map.Entry<SectionType, Section> entry) throws IOException {
+        dos.writeUTF(entry.getKey().name());
+        List<Company> list = ((CompanySection) entry.getValue()).getCompanies();
         dos.writeInt(list.size());
         for (Company company : list) {
             dos.writeUTF(company.getWebsite().getName());
             dos.writeUTF(company.getWebsite().getUrl());
-            List<Company. Position> positions = company.getPositions();
-            dos.writeInt(positions.size());
-            for (Company.Position position : positions) {
+            dos.writeInt(company.getPositions().size());
+            for (Company.Position position : company.getPositions()) {
                 dos.writeUTF(position.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                 dos.writeUTF(position.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                 dos.writeUTF(position.getTitle());
@@ -101,28 +96,23 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private List<String> deserializeList(DataInputStream dis) throws IOException {
-        List<String> list = new ArrayList<>();
+    private <T> List<T> deserializeSection(DataInputStream dis, Class<T> tClass) throws IOException {
+        List<T> list = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            list.add(dis.readUTF());
-        }
-        return list;
-    }
-
-    private List<Company> deserializeCompany(DataInputStream dis) throws IOException {
-        List<Company> list = new ArrayList<>();
-        int companySize = dis.readInt();
-        for (int i = 0; i < companySize; i++) {
-            Company company = new Company(dis.readUTF(), dis.readUTF(), new ArrayList<>());
-            int positionSize = dis.readInt();
-            for (int j = 0; j < positionSize; j++) {
-                company.addPosition(new Company.Position(
-                        LocalDate.parse(dis.readUTF(), DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                        LocalDate.parse(dis.readUTF(), DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                        dis.readUTF(), dis.readUTF()));
+            if (tClass.isAssignableFrom(String.class)) {
+                list.add(tClass.cast(dis.readUTF()));
+            } else {
+                Company company = new Company(dis.readUTF(), dis.readUTF(), new ArrayList<>());
+                int positionSize = dis.readInt();
+                for (int j = 0; j < positionSize; j++) {
+                    company.addPosition(new Company.Position(
+                            LocalDate.parse(dis.readUTF(), DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                            LocalDate.parse(dis.readUTF(), DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                            dis.readUTF(), dis.readUTF()));
+                }
+                list.add(tClass.cast(company));
             }
-            list.add(company);
         }
         return list;
     }
