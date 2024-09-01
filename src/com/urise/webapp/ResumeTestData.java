@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class ResumeTestData {
     public static Resume createResume(String uuid, String fullName) {
-        Resume myResume = new Resume(uuid, "Григорий Кислин");
+        Resume myResume = new Resume(uuid, fullName);
 
         Map<ContactType, String> myContacts = myResume.getContacts();
         myContacts.put(ContactType.PHONE, "+7(921) 855-0482");

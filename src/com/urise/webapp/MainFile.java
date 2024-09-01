@@ -15,7 +15,7 @@ public class MainFile {
             throw new RuntimeException("Error", e);
         }
 
-        File dir = new File("./src/ru/javawebinar/basejava");
+        File dir = new File("basejava/src/com/urise/webapp");
         System.out.println(dir.isDirectory());
         String[] list = dir.list();
         if (list != null) {
@@ -30,17 +30,18 @@ public class MainFile {
             throw new RuntimeException(e);
         }
 
-        listFilesRecursively(new File("basejava/src/com/urise/webapp"));
+        listFilesRecursively(0, new File("basejava/src/com/urise/webapp"));
     }
 
-    public static void listFilesRecursively(File directory) {
+    public static void listFilesRecursively(int level, File directory) {
         File[] files = directory.listFiles();
         if (files == null) return;
         for (File file : files) {
             if (file.isDirectory()) {
-                listFilesRecursively(file);
+                System.out.println(" ".repeat(level) + file.getAbsolutePath());
+                listFilesRecursively((level + 1), file);
             } else {
-                System.out.println(file.getAbsolutePath());
+                System.out.println(" ".repeat(level) + file.getAbsolutePath());
             }
         }
     }

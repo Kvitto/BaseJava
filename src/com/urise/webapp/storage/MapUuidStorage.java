@@ -48,7 +48,7 @@ public class MapUuidStorage extends AbstractStorage<String> {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return storage.size();
     }
 }
