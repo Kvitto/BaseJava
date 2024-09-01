@@ -1,10 +1,5 @@
 package com.urise.webapp.model;
 
-import com.urise.webapp.util.LocalDateAdapter;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
@@ -14,31 +9,23 @@ import java.util.Objects;
 import static com.urise.webapp.util.DateUtil.NOW;
 import static com.urise.webapp.util.DateUtil.of;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    private Link homePage;
-    private List<Position> positions;
-
-    public Company() {
-    }
+    private final Link homePage;
+    private final List<Position> Positions;
 
     public Company(String name, String url, List<Position> Positions) {
         this.homePage = new Link(name, url);
-        this.positions = Positions;
+        this.Positions = Positions;
     }
 
     public List<Position> getPositions() {
-        return positions;
+        return Positions;
     }
 
     public Link getWebsite() {
         return homePage;
-    }
-
-    public void addPosition(Position position) {
-        positions.add(position);
     }
 
     @Override
@@ -46,26 +33,21 @@ public class Company implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Company company = (Company) o;
-        return Objects.equals(homePage, company.homePage) && Objects.equals(positions, company.positions);
+        return Objects.equals(homePage, company.homePage) && Objects.equals(Positions, company.Positions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(homePage, positions);
+        return Objects.hash(homePage, Positions);
     }
 
-    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         private static final long SerialVersionUID = 1L;
-        @XmlJavaTypeAdapter(LocalDateAdapter.class)
-        private LocalDate startDate;
-        @XmlJavaTypeAdapter(LocalDateAdapter.class)
-        private LocalDate endDate;
-        private String title;
-        private String description;
 
-        public Position() {
-        }
+        private final LocalDate startDate;
+        private final LocalDate endDate;
+        private final String title;
+        private final String description;
 
         public Position(int startYear, Month startMonth, String title, String description) {
             this(of(startYear, startMonth), NOW, title, description);

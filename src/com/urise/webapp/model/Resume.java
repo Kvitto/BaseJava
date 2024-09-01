@@ -1,27 +1,18 @@
 package com.urise.webapp.model;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-
 import java.io.Serializable;
 import java.util.*;
 
 /**
  * Initial resume class
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements Comparable<Resume>, Serializable {
     private static final long SerialVersionUID = 1L;
     // Unique identifier
-    private String uuid;
-    private String fullName;
-    private Map<ContactType, String> contacts;
-    private Map<SectionType, Section> sections;
-
-    public Resume() {
-    }
+    private final String uuid;
+    private final String fullName;
+    private final Map<ContactType, String> contacts;
+    private final Map<SectionType, Section> sections;
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -85,13 +76,5 @@ public class Resume implements Comparable<Resume>, Serializable {
     public int compareTo(Resume o) {
         int cmp = fullName.compareTo(o.fullName);
         return cmp != 0 ? cmp : uuid.compareTo(o.uuid);
-    }
-
-    public void addContact(ContactType contactType, String value) {
-        contacts.put(contactType, value);
-    }
-
-    public void addSections(SectionType type, Section section) {
-        sections.put(type, section);
     }
 }

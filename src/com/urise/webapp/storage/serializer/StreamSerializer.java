@@ -1,15 +1,29 @@
 package com.urise.webapp.storage.serializer;
 
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
-public interface StreamSerializer {
+public class StreamSerializer implements SerializerStrategy {
 
-    void doWrite(Resume r, OutputStream os) throws IOException;
+    @Override
+    public void doWrite(Resume r, OutputStream os) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
+            oos.writeObject(r);
+        } catch (IOException e) {
+            throw new StorageException("Write error ", r.getUuid(), e);
+        }
+    }
 
-    Resume doRead(InputStream is) throws IOException;
-
+    @Override
+    public Resume doRead(InputStream is) {
+        try (ObjectInputStream ois = new ObjectInputStream(is)) {
+            return (Resume) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new StorageException("Error read resume", null, e);
+        } catch (IOException e) {
+            throw new StorageException("Read error ", null, e);
+        }
+    }
 }
