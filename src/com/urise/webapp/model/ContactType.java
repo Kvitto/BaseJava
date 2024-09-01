@@ -1,5 +1,9 @@
 package com.urise.webapp.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
 public enum ContactType {
     PHONE("Тел."),
     MOBILE("Мобильный"),
@@ -11,7 +15,10 @@ public enum ContactType {
     STACKOVERFLOW("Профиль Stackoverflow"),
     HOME_PAGE("Домашняя страница");
 
-    private final String title;
+    private String title;
+
+    ContactType() {
+    }
 
     ContactType(String title) {
         this.title = title;

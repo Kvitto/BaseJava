@@ -2,7 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.serializer.SerializerStrategy;
+import com.urise.webapp.storage.serializer.StreamSerializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
-    private final SerializerStrategy serializer;
+    private final StreamSerializer serializer;
     private final Path directory;
 
-    protected PathStorage(SerializerStrategy serializer, String dir) {
+    protected PathStorage(StreamSerializer serializer, String dir) {
         this.serializer = serializer;
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
@@ -28,30 +28,22 @@ public class PathStorage extends AbstractStorage<Path> {
         }
     }
 
-    protected void doWrite(Resume r, OutputStream os) {
+    protected void doWrite(Resume r, OutputStream os) throws IOException {
         serializer.doWrite(r, os);
     }
 
-    protected Resume doRead(InputStream is) {
+    protected Resume doRead(InputStream is) throws IOException {
         return serializer.doRead(is);
     }
 
     @Override
     public void clear() {
-        try (Stream<Path> stream = Files.list(directory)) {
-            stream.forEach(this::doDelete);
-        } catch (IOException e) {
-            throw new StorageException("Path delete error", null);
-        }
+        getFilesList().forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-        try (Stream<Path> stream = Files.list(directory)) {
-            return (int) stream.count();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return (int) getFilesList().count();
     }
 
     @Override
@@ -64,7 +56,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             doWrite(r, outputStream);
         } catch (IOException e) {
-            throw new StorageException("Couldn't create Path " + path.getFileName().toString(), r.getUuid(), e);
+            throw new StorageException("Couldn't create Path " + getFileName(path), r.getUuid(), e);
         }
     }
 
@@ -78,7 +70,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             doWrite(r, outputStream);
         } catch (IOException e) {
-            throw new StorageException("Couldn't create Path " + path.getFileName().toString(), r.getUuid(), e);
+            throw new StorageException("Couldn't create Path " + getFileName(path), r.getUuid(), e);
         }
         doUpdate(path, r);
     }
@@ -88,7 +80,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try (InputStream inputStream = Files.newInputStream(path)) {
             return doRead(inputStream);
         } catch (IOException e) {
-            throw new StorageException("Path read error", path.getFileName().toString(), e);
+            throw new StorageException("Path read error", getFileName(path), e);
         }
     }
 
@@ -97,16 +89,24 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("Path delete error", path.getFileName().toString(), e);
+            throw new StorageException("Path delete error", getFileName(path), e);
         }
     }
 
     @Override
     protected List<Resume> getResumeList() {
-        try (Stream<Path> stream = Files.list(directory)) {
-            return stream.map(this::doGet).collect(Collectors.toList());
+        return getFilesList().map(this::doGet).collect(Collectors.toList());
+    }
+
+    private String getFileName(Path path) {
+        return path.getFileName().toString();
+    }
+
+    private Stream<Path> getFilesList() {
+        try {
+            return Files.list(directory);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new StorageException("Directory read error ", e);
         }
     }
 }
