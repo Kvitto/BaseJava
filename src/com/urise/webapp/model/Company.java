@@ -37,8 +37,8 @@ public class Company implements Serializable {
         return homePage;
     }
 
-    public void addPosition(Position position) {
-        positions.add(position);
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
     }
 
     @Override
