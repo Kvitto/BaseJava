@@ -1,47 +1,27 @@
 package com.urise.webapp;
 
 public class MainDeadLock {
-    Object lock1 = new Object();
-    Object lock2 = new Object();
-
     public static void main(String[] args) {
-        MainDeadLock deadLock = new MainDeadLock();
+        String lock1 = "Lock1";
+        String lock2 = "Lock2";
 
-        deadLock.tOne.start();
-        deadLock.tTwo.start();
+        deadLock(lock1, lock2);
+        deadLock(lock2, lock1);
     }
 
-    Thread tOne = new Thread(){
-        @Override
-        public void run() {
-            synchronized (lock1) {
-                System.out.println(getName() + " lock1 blocked");
+    private static void deadLock(String l1, String l2) {
+        new Thread(() -> {
+            synchronized (l1) {
+                System.out.println(Thread.currentThread().getName() + " blocked " + l1);
                 try {
-                    sleep(100);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                synchronized (lock2) {
-                    System.out.println(getName() + " lock2 blocked");
+                synchronized (l2) {
+                    System.out.println(Thread.currentThread().getName() + " blocked " + l2);
                 }
             }
-        }
-    };
-
-    Thread tTwo = new Thread(){
-        @Override
-        public void run() {
-            synchronized (lock2) {
-                System.out.println(getName() + " lock2 blocked");
-                try {
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                synchronized (lock1) {
-                    System.out.println(getName() + " lock1 blocked");
-                }
-            }
-        }
-    };
+        }).start();
+    }
 }
