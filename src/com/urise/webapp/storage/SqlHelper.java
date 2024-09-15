@@ -6,25 +6,19 @@ import com.urise.webapp.sql.ConnectionFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SqlHelper {
     public final ConnectionFactory connectionFactory;
 
-    public SqlHelper(String dbUrl, String dbUser, String dbPass) {
-        this.connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPass);
+    public SqlHelper(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
     }
 
-    public <T> T query(String sql, String[] values, SqlHelperQuery<T> query) {
+    public <T> T query(String sql, SqlHelperQuery<T> query) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
-            if (values != null) {
-                for (int i = 0; i < values.length; i++) {
-                    ps.setString(i + 1, values[i]);
-                }
-            }
             return query.execute(ps);
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
