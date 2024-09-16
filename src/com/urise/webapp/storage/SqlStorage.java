@@ -9,15 +9,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class SqlStorage implements Storage {
     public final ConnectionFactory connectionFactory;
     private final SqlHelper sqlHelper;
 
-    public SqlStorage(Properties properties) {
-        this.connectionFactory = () -> DriverManager.getConnection(properties.getProperty("db.url"),
-                properties.getProperty("db.user"), properties.getProperty("db.password"));
+    public SqlStorage(String dbUrl, String dbUser, String dbPass) {
+        this.connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPass);
         sqlHelper = new SqlHelper(connectionFactory);
     }
 
