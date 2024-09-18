@@ -1,12 +1,17 @@
 package com.urise.webapp;
 
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.Section;
+import com.urise.webapp.model.SectionType;
+
+import java.util.Map;
 
 public class ResumeTestData {
     public static Resume createResume(String uuid, String fullName) {
         Resume myResume = new Resume(uuid, fullName);
 
-/*        Map<ContactType, String> myContacts = myResume.getContacts();
+        Map<ContactType, String> myContacts = myResume.getContacts();
         myContacts.put(ContactType.PHONE, "+7(921) 855-0482");
         myContacts.put(ContactType.SKYPE, "skype:grigory.kislin");
         myContacts.put(ContactType.MAIL, "gkislin@yandex.ru");
@@ -16,7 +21,7 @@ public class ResumeTestData {
         myContacts.put(ContactType.HOME_PAGE, "http://gkislin.ru/");
 
         Map<SectionType, Section> mySections = myResume.getSections();
-
+/*
 // OBJECTIVE section
         String myObjective = "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям";
         mySections.put(SectionType.OBJECTIVE, new TextSection(myObjective));
