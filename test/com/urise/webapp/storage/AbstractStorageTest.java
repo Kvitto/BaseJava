@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.Config;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +64,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() throws Exception {
         Resume newResume = createResume(UUID_1, "newFirstResume");
+        newResume.addContact(ContactType.HOME_PAGE, "http://gkislin.ru/");
+        newResume.getContacts().put(ContactType.MAIL, "edarg@wsfws.ru");
         storage.update(newResume);
         Resume oldRes = storage.get(UUID_1);
         assertEquals(newResume, oldRes);
@@ -77,7 +80,7 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
         assertEquals(3, list.size());
-        assertEquals(list, Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
+        assertEquals(Arrays.asList(RESUME_1, RESUME_2, RESUME_3), list);
     }
 
     @Test

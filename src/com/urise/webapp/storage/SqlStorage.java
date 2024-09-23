@@ -22,7 +22,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.execute("" +
+        return sqlHelper.execute(
                 "    SELECT * FROM resume r " +
                 " LEFT JOIN contact c " +
                 "        ON r.uuid = c.resume_uuid " +
@@ -84,25 +84,23 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("" +
+        return sqlHelper.execute(
                 "    SELECT * FROM resume r " +
                 " LEFT JOIN contact c " +
                 "        ON r.uuid = c.resume_uuid " +
                 "  ORDER BY full_name, uuid", ps -> {
             ResultSet rs = ps.executeQuery();
             Map<String, Resume> resumeMap = new LinkedHashMap<>();
-            if (rs.next()) {
-                do {
-                    String uuid = rs.getString("uuid");
-                    Resume r = resumeMap.get(uuid);
-                    if (r == null) {
-                        r = new Resume(uuid, rs.getString("full_name"));
-                        resumeMap.put(uuid, r);
-                    }
-                    addContact(rs, r);
-                } while (rs.next());
+            while (rs.next()) {
+                String uuid = rs.getString("uuid");
+                Resume r = resumeMap.get(uuid);
+                if (r == null) {
+                    r = new Resume(uuid, rs.getString("full_name"));
+                    resumeMap.put(uuid, r);
+                }
+                addContact(rs, r);
             }
-            return resumeMap.values().stream().toList();
+            return new ArrayList<>(resumeMap.values());
         });
     }
 

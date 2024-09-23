@@ -18,7 +18,7 @@ public class ResumeTestData {
         myContacts.put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
         myContacts.put(ContactType.GITHUB, "https://github.com/gkislin");
         myContacts.put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
-        myContacts.put(ContactType.HOME_PAGE, "http://gkislin.ru/");
+//        myContacts.put(ContactType.HOME_PAGE, "http://gkislin.ru/");
 
         Map<SectionType, Section> mySections = myResume.getSections();
 /*
