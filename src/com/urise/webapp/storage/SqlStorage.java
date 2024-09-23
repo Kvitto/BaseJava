@@ -90,7 +90,7 @@ public class SqlStorage implements Storage {
                 "        ON r.uuid = c.resume_uuid " +
                 "  ORDER BY full_name, uuid", ps -> {
             ResultSet rs = ps.executeQuery();
-            Map<String, Resume> resumeMap = new HashMap<>();
+            Map<String, Resume> resumeMap = new LinkedHashMap<>();
             if (rs.next()) {
                 do {
                     String uuid = rs.getString("uuid");
@@ -102,9 +102,7 @@ public class SqlStorage implements Storage {
                     addContact(rs, r);
                 } while (rs.next());
             }
-            List<Resume> resumes = new ArrayList<>(resumeMap.values());
-            Collections.sort(resumes);
-            return resumes;
+            return resumeMap.values().stream().toList();
         });
     }
 
