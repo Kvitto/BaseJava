@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,7 +81,9 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
         assertEquals(3, list.size());
-        assertEquals(Arrays.asList(RESUME_1, RESUME_2, RESUME_3), list);
+        List<Resume> sortedList = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
+        Collections.sort(sortedList);
+        assertEquals(sortedList, list);
     }
 
     @Test
