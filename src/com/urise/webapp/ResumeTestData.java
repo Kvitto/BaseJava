@@ -82,7 +82,7 @@ public class ResumeTestData {
                 "архитектурных шаблонов, UML, функционального программирования");
         myQualifications.add("Родной русский, английский \"upper intermediate\"");
         mySections.put(SectionType.QUALIFICATION, new ListSection(myQualifications));
-
+/*
 // EXPERIENCE section
         List<Company> myCompanies = new ArrayList<>();
         myCompanies.add(new Company("Java Online Projects", "http://javaops.ru/",
