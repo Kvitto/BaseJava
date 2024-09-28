@@ -1,13 +1,14 @@
 package com.urise.webapp;
 
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.Section;
-import com.urise.webapp.model.SectionType;
+import com.urise.webapp.model.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ResumeTestData {
+    private ResumeTestData() {}
+
     public static Resume createResume(String uuid, String fullName) {
         Resume myResume = new Resume(uuid, fullName);
 
@@ -18,10 +19,10 @@ public class ResumeTestData {
         myContacts.put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
         myContacts.put(ContactType.GITHUB, "https://github.com/gkislin");
         myContacts.put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
-//        myContacts.put(ContactType.HOME_PAGE, "http://gkislin.ru/");
+        myContacts.put(ContactType.HOME_PAGE, "http://gkislin.ru/");
 
         Map<SectionType, Section> mySections = myResume.getSections();
-/*
+
 // OBJECTIVE section
         String myObjective = "Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям";
         mySections.put(SectionType.OBJECTIVE, new TextSection(myObjective));

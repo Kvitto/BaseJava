@@ -1,8 +1,7 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
@@ -37,7 +36,7 @@ public class SqlStorage implements Storage {
                     do {
                         addContact(rs, r);
                     } while (rs.next());
-
+                    getSections(r);
                     return r;
                 });
     }
@@ -52,8 +51,10 @@ public class SqlStorage implements Storage {
                     throw new NotExistStorageException(r.getUuid());
                 }
             }
-            deleteContacts(conn, r);
+            deleteContact(conn, r);
+            deleteSection(conn, r);
             insertContact(conn, r);
+            insertSection(conn, r);
             return null;
         });
     }
@@ -67,6 +68,7 @@ public class SqlStorage implements Storage {
                 ps.execute();
             }
             insertContact(conn, r);
+            insertSection(conn, r);
             return null;
         });
     }
@@ -93,15 +95,17 @@ public class SqlStorage implements Storage {
                     }
                     return null;
                 });
-        return sqlHelper.execute(
+        sqlHelper.execute(
                 "SELECT * FROM contact", ps -> {
                     ResultSet rs = ps.executeQuery();
                     while (rs.next()) {
                         map.get(rs.getString("resume_uuid"))
                                 .addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
                     }
-                    return new ArrayList<>(map.values());
+                    return null;
                 });
+        map.values().forEach(this::getSections);
+        return new ArrayList<>(map.values());
     }
 
     @Override
@@ -124,8 +128,28 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void deleteContacts(Connection conn, Resume r) {
-        sqlHelper.execute("DELETE  FROM contact WHERE resume_uuid=?", ps -> {
+    private void insertSection(Connection conn, Resume r) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, value) VALUES (?,?,?)")) {
+            for (Map.Entry<SectionType, Section> e : r.getSections().entrySet()) {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, e.getKey().name());
+                ps.setString(3, e.getValue().toString());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+
+    private void deleteContact(Connection conn, Resume r) {
+        sqlHelper.execute("DELETE FROM contact WHERE resume_uuid=?", ps -> {
+            ps.setString(1, r.getUuid());
+            ps.execute();
+            return null;
+        });
+    }
+
+    private void deleteSection(Connection conn, Resume r) {
+        sqlHelper.execute("DELETE FROM section WHERE resume_uuid=?", ps -> {
             ps.setString(1, r.getUuid());
             ps.execute();
             return null;
@@ -138,4 +162,22 @@ public class SqlStorage implements Storage {
             r.addContact(ContactType.valueOf(rs.getString("type")), value);
         }
     }
+
+    private void getSections(Resume resume) {
+        sqlHelper.execute(
+                "SELECT * FROM section WHERE resume_uuid =?",
+                ps -> {
+                    ps.setString(1, resume.getUuid());
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {
+                        SectionType type = SectionType.valueOf(rs.getString("type"));
+                        resume.getSections().put(type, (type == SectionType.OBJECTIVE || type == SectionType.PERSONAL) ?
+                                new TextSection(rs.getString("value")) :
+                                new ListSection(List.of(rs.getString("value").split("\n"))));
+                    }
+                    return null;
+                });
+    }
+
+
 }
