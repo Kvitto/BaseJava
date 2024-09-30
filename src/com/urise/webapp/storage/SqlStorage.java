@@ -93,16 +93,10 @@ public class SqlStorage implements Storage {
                     }
                     return null;
                 });
-        sqlHelper.execute(
-                "SELECT * FROM contact", ps -> {
-                    ResultSet rs = ps.executeQuery();
-                    while (rs.next()) {
-                        map.get(rs.getString("resume_uuid"))
-                                .addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
-                    }
-                    return null;
-                });
-        map.values().forEach(this::addSections);
+        map.values().forEach(r -> {
+            addContacts(r);
+            addSections(r);
+        });
         return new ArrayList<>(map.values());
     }
 
@@ -189,11 +183,11 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void addSections(Resume resume) {
+    private void addSections(Resume r) {
         sqlHelper.execute(
                 "SELECT * FROM section WHERE resume_uuid =?",
                 ps -> {
-                    ps.setString(1, resume.getUuid());
+                    ps.setString(1, r.getUuid());
                     ResultSet rs = ps.executeQuery();
                     while (rs.next()) {
                         SectionType type = SectionType.valueOf(rs.getString("type"));
@@ -203,7 +197,7 @@ public class SqlStorage implements Storage {
                                     new ListSection(List.of(rs.getString("value").split("\n")));
                             case EXPERIENCE, EDUCATION -> new CompanySection(new ArrayList<>());
                         };
-                        resume.getSections().put(type, section);
+                        r.getSections().put(type, section);
                     }
                     return null;
                 });
