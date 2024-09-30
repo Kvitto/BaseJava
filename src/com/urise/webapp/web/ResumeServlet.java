@@ -13,14 +13,20 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
+    private Storage storage;
+
+    @Override
+    public void init() throws ServletException {
+        storage = Config.get().getStorage();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        Storage db = Config.get().getStorage();
-        List<Resume> resumes = db.getAllSorted();
+        List<Resume> resumes = storage.getAllSorted();
 
         PrintWriter writer = response.getWriter();
         StringBuilder sb = new StringBuilder();
