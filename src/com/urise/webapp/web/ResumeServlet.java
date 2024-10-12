@@ -12,9 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ResumeServlet extends HttpServlet {
-
+    private static final Logger log = Logger.getLogger(ResumeServlet.class.getName());
     private Storage storage; // = Config.get().getStorage();
 
     @Override
@@ -27,35 +28,39 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r;
-        try {
-            r = storage.get(uuid);
-            r.setFullName(fullName);
-        } catch (NotExistStorageException e) {
-            r = new Resume(uuid, fullName);
-            storage.save(r);
-        }
-        for (ContactType type : ContactType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && !value.trim().isEmpty()) {
-                r.addContact(type, value);
-            } else {
-                r.getContacts().remove(type);
+        if (!fullName.trim().isEmpty()) {
+            Resume r;
+            try {
+                r = storage.get(uuid);
+                r.setFullName(fullName);
+            } catch (NotExistStorageException e) {
+                r = new Resume(uuid, fullName);
+                storage.save(r);
             }
-        }
-        for (SectionType type : SectionType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && !value.trim().isEmpty()) {
-                switch (type) {
-                    case PERSONAL, OBJECTIVE -> r.addSections(type, new TextSection(value.replace("\r\n", " ")));
-                    case ACHIEVEMENT, QUALIFICATION -> r.addSections(type, new ListSection(List.of(value.split("\r\n"))));
-                    case EXPERIENCE, EDUCATION -> {}
+            for (ContactType type : ContactType.values()) {
+                String value = request.getParameter(type.name());
+                if (value != null && !value.trim().isEmpty()) {
+                    r.addContact(type, value);
+                } else {
+                    r.getContacts().remove(type);
                 }
-            } else {
-                r.getContacts().remove(type);
             }
+            for (SectionType type : SectionType.values()) {
+                String value = request.getParameter(type.name());
+                if (value != null && !value.trim().isEmpty()) {
+                    switch (type) {
+                        case PERSONAL, OBJECTIVE -> r.addSections(type, new TextSection(value.replace("\r\n", " ")));
+                        case ACHIEVEMENT, QUALIFICATION ->
+                                r.addSections(type, new ListSection(List.of(value.split("\r\n"))));
+                        case EXPERIENCE, EDUCATION -> {
+                        }
+                    }
+                } else {
+                    r.getSections().remove(type);
+                }
+            }
+            storage.update(r);
         }
-        storage.update(r);
         response.sendRedirect("resume");
     }
 
