@@ -1,8 +1,8 @@
 package com.urise.webapp.web;
 
 import com.urise.webapp.Config;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
 
@@ -26,12 +27,30 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
-        r.setFullName(fullName);
+        Resume r;
+        try {
+            r = storage.get(uuid);
+            r.setFullName(fullName);
+        } catch (NotExistStorageException e) {
+            r = new Resume(uuid, fullName);
+            storage.save(r);
+        }
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            if (value != null && !value.trim().isEmpty()) {
                 r.addContact(type, value);
+            } else {
+                r.getContacts().remove(type);
+            }
+        }
+        for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null && !value.trim().isEmpty()) {
+                switch (type) {
+                    case PERSONAL, OBJECTIVE -> r.addSections(type, new TextSection(value.replace("\r\n", " ")));
+                    case ACHIEVEMENT, QUALIFICATION -> r.addSections(type, new ListSection(List.of(value.split("\r\n"))));
+                    case EXPERIENCE, EDUCATION -> {}
+                }
             } else {
                 r.getContacts().remove(type);
             }
@@ -55,8 +74,14 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             case "view":
-            case "edit":
                 r = storage.get(uuid);
+                break;
+            case "edit":
+                if ("null".equals(uuid)) {
+                    r = new Resume("");
+                } else {
+                    r = storage.get(uuid);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
