@@ -15,7 +15,7 @@
         <tr>
             <th>Имя</th>
             <th>Email</th>
-            <th><a href="resume?uuid=null&action=edit"><img src="img/add.png"></a></th>
+            <th><a href="resume?action=add"><img src="img/add.png"></a></th>
             <th></th>
         </tr>
         <jsp:useBean id="resumes" scope="request" type="java.util.List"/>

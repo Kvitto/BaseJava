@@ -12,10 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ResumeServlet extends HttpServlet {
-    private static final Logger log = Logger.getLogger(ResumeServlet.class.getName());
     private Storage storage; // = Config.get().getStorage();
 
     @Override
@@ -67,26 +65,22 @@ public class ResumeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
-        if (action == null) {
-            request.setAttribute("resumes", storage.getAllSorted());
-            request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
-            return;
-        }
         Resume r;
-        switch (action) {
+        switch (action == null ? "all" : action) {
+            case "all":
+                request.setAttribute("resumes", storage.getAllSorted());
+                request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+                return;
             case "delete":
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
             case "view":
+            case "edit":
                 r = storage.get(uuid);
                 break;
-            case "edit":
-                if ("null".equals(uuid)) {
-                    r = new Resume("");
-                } else {
-                    r = storage.get(uuid);
-                }
+            case "add":
+                r = new Resume("");
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
