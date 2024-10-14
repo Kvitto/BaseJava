@@ -1,0 +1,12 @@
+.idea
+out
+*.iml
+log
+
+
+/BaseJava/storage
+/lesson/lesson1.md
+/storage/
+/lib/
+/Patch/
+/BaseJava/lesson/lesson1.md
