@@ -47,9 +47,9 @@ public class ResumeServlet extends HttpServlet {
                 String value = request.getParameter(type.name());
                 if (value != null && !value.trim().isEmpty()) {
                     switch (type) {
-                        case PERSONAL, OBJECTIVE -> r.addSections(type, new TextSection(value.replace("\r\n", " ")));
+                        case PERSONAL, OBJECTIVE -> r.addSections(type, new TextSection(value.replaceAll("[\r\n]+", " ")));
                         case ACHIEVEMENT, QUALIFICATION ->
-                                r.addSections(type, new ListSection(List.of(value.split("\r\n"))));
+                                r.addSections(type, new ListSection(List.of(value.split("[\r\n]+"))));
                         case EXPERIENCE, EDUCATION -> {
                         }
                     }
@@ -80,7 +80,7 @@ public class ResumeServlet extends HttpServlet {
                 r = storage.get(uuid);
                 break;
             case "add":
-                r = new Resume("");
+                r = new Resume();
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");

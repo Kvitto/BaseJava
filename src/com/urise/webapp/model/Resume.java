@@ -17,10 +17,12 @@ public class Resume implements Comparable<Resume>, Serializable {
     // Unique identifier
     private String uuid;
     private String fullName;
-    private Map<ContactType, String> contacts;
-    private Map<SectionType, Section> sections;
+    private final Map<ContactType, String> contacts;
+    private final Map<SectionType, Section> sections;
 
     public Resume() {
+        contacts = new HashMap<>();
+        sections = new HashMap<>();
     }
 
     public Resume(String fullName) {
