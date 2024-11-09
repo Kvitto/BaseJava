@@ -1,4 +1,7 @@
 <%@ page import="com.urise.webapp.model.ListSection" %>
+<%@ page import="com.urise.webapp.model.CompanySection" %>
+<%@ page import="com.urise.webapp.model.Company" %>
+<%@ page import="com.urise.webapp.model.Link" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -39,7 +42,18 @@
                 out.print(line + "<br/>");
               }
               break;
-            default:
+            case 4:
+            case 5:
+              out.print("<br/><b>" + sectionEntry.getKey().name() + "</b><br/>");
+              for (Company company : ((CompanySection) sectionEntry.getValue()).getCompanies()) {
+                Link link = company.getWebsite();
+                out.println("<h3><a href=" + (link.getUrl().isEmpty() ? "" : link.getUrl()) + ">" + link.getName() + "</a></h3>");
+                for (Company.Position position : company.getPositions()) {
+                  out.print("<br/><b>" + position.getTitle() + "</b><br/>");
+                  out.print("<i>" + position.getStartDate() + " - " + position.getEndDate() + "</i><br/>");
+                  out.print(position.getDescription() + "<br/><br/>");
+                }
+              }
               break;
           }
           %>

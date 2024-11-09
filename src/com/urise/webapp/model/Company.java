@@ -1,5 +1,7 @@
 package com.urise.webapp.model;
 
+import com.google.gson.annotations.JsonAdapter;
+import com.urise.webapp.util.GsonLocalDateAdapter;
 import com.urise.webapp.util.LocalDateAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -18,6 +20,8 @@ import static com.urise.webapp.util.DateUtil.of;
 public class Company implements Serializable {
     private static final long SerialVersionUID = 1L;
 
+    public static final Company EMPTY = new Company("", "", List.of(Position.EMPTY));
+
     private Link homePage;
     private List<Position> positions;
 
@@ -27,6 +31,11 @@ public class Company implements Serializable {
     public Company(String name, String url, List<Position> Positions) {
         this.homePage = new Link(name, url);
         this.positions = Positions;
+    }
+
+    public Company(Link homePage, List<Position> positions) {
+        this.homePage = homePage;
+        this.positions = positions;
     }
 
     public List<Position> getPositions() {
@@ -57,8 +66,11 @@ public class Company implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         private static final long SerialVersionUID = 1L;
+        public static final Position EMPTY = new Position();
+        @JsonAdapter(GsonLocalDateAdapter.class)
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate startDate;
+        @JsonAdapter(GsonLocalDateAdapter.class)
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate endDate;
         private String title;

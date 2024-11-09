@@ -216,7 +216,7 @@ public class SqlStorage implements Storage {
         String content = rs.getString("value");
         if (content != null) {
             SectionType type = SectionType.valueOf(rs.getString("type"));
-            r.addSections(type, JsonParser.read(content, Section.class));
+            r.addSection(type, JsonParser.read(content, Section.class));
         }
     }
 

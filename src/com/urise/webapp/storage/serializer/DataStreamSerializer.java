@@ -46,11 +46,11 @@ public class DataStreamSerializer implements StreamSerializer {
             for (int i = 0; i < size; i++) {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
                 switch (sectionType) {
-                    case PERSONAL, OBJECTIVE -> resume.addSections(sectionType, new TextSection(dis.readUTF()));
+                    case PERSONAL, OBJECTIVE -> resume.addSection(sectionType, new TextSection(dis.readUTF()));
                     case ACHIEVEMENT, QUALIFICATION ->
-                            resume.addSections(sectionType, new ListSection(deserializeList(dis, dis::readUTF)));
+                            resume.addSection(sectionType, new ListSection(deserializeList(dis, dis::readUTF)));
                     case EXPERIENCE, EDUCATION ->
-                        resume.addSections(sectionType, new CompanySection(deserializeList(dis, () -> {
+                        resume.addSection(sectionType, new CompanySection(deserializeList(dis, () -> {
                             Company company = new Company(dis.readUTF(), dis.readUTF(), new ArrayList<>());
                             company.setPositions(deserializeList(dis, () -> {
                                 Company.Position position;

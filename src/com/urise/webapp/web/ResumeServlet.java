@@ -4,6 +4,8 @@ import com.urise.webapp.Config;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.util.HtmlUtil;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
@@ -45,12 +48,34 @@ public class ResumeServlet extends HttpServlet {
             }
             for (SectionType type : SectionType.values()) {
                 String value = request.getParameter(type.name());
+                String[] values = request.getParameterValues(type.name());
                 if (value != null && !value.trim().isEmpty()) {
                     switch (type) {
-                        case PERSONAL, OBJECTIVE -> r.addSections(type, new TextSection(value.replaceAll("[\r\n]+", " ")));
+                        case PERSONAL, OBJECTIVE ->
+                                r.addSection(type, new TextSection(value.replaceAll("[\r\n]+", " ")));
                         case ACHIEVEMENT, QUALIFICATION ->
-                                r.addSections(type, new ListSection(List.of(value.split("[\r\n]+"))));
+                                r.addSection(type, new ListSection(List.of(value.split("[\r\n]+"))));
                         case EXPERIENCE, EDUCATION -> {
+                            List<Company> companies = new ArrayList<>();
+                            String[] urls = request.getParameterValues(type.name() + "url");
+                            for (int i = 0; i < values.length; i++) {
+                                String name = values[i];
+                                if (!HtmlUtil.isEmpty(name)) {
+                                    List<Company.Position> positions = new ArrayList<>();
+                                    String pfx = type.name() + i;
+                                    String[] startDates = request.getParameterValues(pfx + "startDate");
+                                    String[] endDates = request.getParameterValues(pfx + "endDate");
+                                    String[] titles = request.getParameterValues(pfx + "title");
+                                    String[] descriptions = request.getParameterValues(pfx + "description");
+                                    for (int j = 0; j < titles.length; j++) {
+                                        if (!HtmlUtil.isEmpty(titles[j])) {
+                                            positions.add(new Company.Position(DateUtil.parse(startDates[j]), DateUtil.parse(endDates[j]), titles[j], descriptions[j]));
+                                        }
+                                    }
+                                    companies.add(new Company(name, urls[i], positions));
+                                }
+                            }
+                            r.addSection(type, new CompanySection(companies));
                         }
                     }
                 } else {
@@ -76,8 +101,43 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             case "view":
+                r = storage.get(uuid);
+                break;
             case "edit":
                 r = storage.get(uuid);
+                for (SectionType type : SectionType.values()) {
+                    Section section = r.getSection(type);
+                    switch (type) {
+                        case PERSONAL, OBJECTIVE -> {
+                            if (section == null) {
+                                section = TextSection.EMPTY;
+                                r.addSection(type, section);
+                            }
+                        }
+                        case ACHIEVEMENT, QUALIFICATION -> {
+                            if (section == null) {
+                                section = ListSection.EMPTY;
+                                r.addSection(type, section);
+                            }
+                        }
+                        case EXPERIENCE, EDUCATION -> {
+                            CompanySection orgSection = (CompanySection) section;
+                            List<Company> emptyFirstOrganizations = new ArrayList<>();
+                            emptyFirstOrganizations.add(Company.EMPTY);
+                            if (orgSection != null) {
+                                for (Company org : orgSection.getCompanies()) {
+                                    List<Company.Position> emptyFirstPositions = new ArrayList<>();
+                                    emptyFirstPositions.add(Company.Position.EMPTY);
+                                    emptyFirstPositions.addAll(org.getPositions());
+                                    emptyFirstOrganizations.add(new Company(org.getWebsite(), emptyFirstPositions));
+                                }
+                            }
+                            section = new CompanySection(emptyFirstOrganizations);
+                        }
+                    }
+
+
+                }
                 break;
             case "add":
                 r = new Resume();

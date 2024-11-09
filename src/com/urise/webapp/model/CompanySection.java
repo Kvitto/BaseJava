@@ -1,9 +1,12 @@
 package com.urise.webapp.model;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CompanySection extends Section {
     private static final long SerialVersionUID = 1L;
 
@@ -17,7 +20,7 @@ public class CompanySection extends Section {
         this.companies = companies;
     }
 
-    public void addCompany(Company company) {
+    public void setCompany(Company company) {
         companies.add(company);
     }
 

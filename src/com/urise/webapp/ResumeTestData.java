@@ -2,6 +2,7 @@ package com.urise.webapp;
 
 import com.urise.webapp.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class ResumeTestData {
                 "архитектурных шаблонов, UML, функционального программирования");
         myQualifications.add("Родной русский, английский \"upper intermediate\"");
         mySections.put(SectionType.QUALIFICATION, new ListSection(myQualifications));
-/*
+
 // EXPERIENCE section
         List<Company> myCompanies = new ArrayList<>();
         myCompanies.add(new Company("Java Online Projects", "http://javaops.ru/",
@@ -150,7 +151,7 @@ public class ResumeTestData {
         for (SectionType section : SectionType.values()) {
             System.out.println(section.getTitle() + "\n" + myResume.getSections().get(section));
         }
-*/
+
         return myResume;
     }
 }
